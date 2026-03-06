@@ -70,8 +70,7 @@ export default function Home() {
           🇲🇲 Built for Myanmar developers
         </div>
         <h1 className="text-5xl sm:text-6xl font-bold tracking-tight leading-tight mb-6">
-          Subdomains for
-          <span className="text-green-600">Myanmar devs </span>
+          Subdomains for <span className="text-green-600">Myanmar devs </span>
         </h1>
         <p className="text-xl text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto mb-10">
           Get a free{" "}
