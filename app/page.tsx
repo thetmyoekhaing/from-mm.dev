@@ -14,20 +14,17 @@ const steps = [
   {
     number: "01",
     title: "Sign in with GitHub",
-    description:
-      "Log in with your GitHub account. Your username is automatically suggested as your subdomain.",
+    description: "Login with GitHub to get started.",
   },
   {
     number: "02",
     title: "Claim your subdomain",
-    description:
-      "Pick yourname.from-mm.dev — or any custom name. Choose GitHub Pages or Vercel as your target.",
+    description: "Choose your from-mm.dev name.",
   },
   {
     number: "03",
     title: "Point & publish",
-    description:
-      "Follow our quick setup guide. Your subdomain goes live as soon as DNS propagates (usually under 5 minutes).",
+    description: "Connect it to GitHub Pages or Vercel.",
   },
 ];
 
@@ -42,7 +39,10 @@ export default function Home() {
           <span className="text-green-600">from</span>-mm.dev
         </span>
         <div className="flex items-center gap-4 text-sm">
-          <Link href="/docs" className="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+          <Link
+            href="/docs"
+            className="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+          >
             Docs
           </Link>
           {isLoggedIn ? (
@@ -67,15 +67,18 @@ export default function Home() {
       <section className="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
         <div className="inline-flex items-center gap-2 rounded-full bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 px-4 py-1.5 text-sm text-green-700 dark:text-green-400 mb-8">
           <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          Free for Myanmar developers
+          🇲🇲 Built for Myanmar developers
         </div>
         <h1 className="text-5xl sm:text-6xl font-bold tracking-tight leading-tight mb-6">
-          Your project,{" "}
-          <span className="text-green-600">proudly Myanmar</span>
+          Subdomains for
+          <span className="text-green-600">Myanmar devs </span>
         </h1>
         <p className="text-xl text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto mb-10">
-          Get a free <strong className="text-zinc-900 dark:text-zinc-100">yourname.from-mm.dev</strong> subdomain for
-          your GitHub Pages or Vercel project. No cost, no fuss.
+          Get a free{" "}
+          <strong className="text-zinc-900 dark:text-zinc-100">
+            yourname.from-mm.dev
+          </strong>{" "}
+          subdomain for your GitHub Pages or Vercel projects.
         </p>
 
         {/* Subdomain preview */}
@@ -128,7 +131,9 @@ export default function Home() {
               className="flex items-center justify-between rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-5 py-4"
             >
               <span className="font-mono text-sm">
-                <span className="text-green-600 font-semibold">{ex.subdomain}</span>
+                <span className="text-green-600 font-semibold">
+                  {ex.subdomain}
+                </span>
                 <span className="text-zinc-400">.from-mm.dev</span>
               </span>
               <span className="text-xs rounded-full bg-zinc-200 dark:bg-zinc-700 px-3 py-1 text-zinc-600 dark:text-zinc-300">
@@ -141,7 +146,9 @@ export default function Home() {
 
       {/* CTA */}
       <section className="max-w-5xl mx-auto px-6 py-20 text-center">
-        <h2 className="text-3xl font-bold mb-4">Ready to get your .dev domain?</h2>
+        <h2 className="text-3xl font-bold mb-4">
+          Ready to get your .dev domain?
+        </h2>
         <p className="text-zinc-500 dark:text-zinc-400 mb-8">
           Join Myanmar developers already using from-mm.dev.
         </p>
