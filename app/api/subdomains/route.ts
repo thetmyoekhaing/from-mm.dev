@@ -10,9 +10,12 @@ import { randomUUID } from "crypto";
 
 const schema = z.object({
   subdomain: z.string(),
-  type: z.enum(["github_pages", "vercel"]),
+  type: z.enum(["github_pages", "vercel", "netlify"]),
   vercelTarget: z.string().optional(),
   vercelTxtValue: z.string().optional(),
+  netlifyTarget: z.string().optional(),
+  netlifyTxtName: z.string().optional(),
+  netlifyTxtValue: z.string().optional(),
 });
 
 export async function GET(req: NextRequest) {
@@ -41,7 +44,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
 
-  const { subdomain, type, vercelTarget, vercelTxtValue } = parsed.data;
+  const { subdomain, type, vercelTarget, vercelTxtValue, netlifyTarget, netlifyTxtName, netlifyTxtValue } =
+    parsed.data;
   const validation = validateSubdomain(subdomain);
   if (!validation.valid) {
     return NextResponse.json({ error: validation.error }, { status: 400 });
@@ -72,13 +76,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Subdomain already taken." }, { status: 409 });
   }
 
-  const target = buildTarget(type, dbUser[0].githubUsername, vercelTarget);
+  if (type === "vercel" && !vercelTarget) {
+    return NextResponse.json({ error: "Vercel CNAME value is required." }, { status: 400 });
+  }
+  if (type === "netlify" && !netlifyTarget) {
+    return NextResponse.json({ error: "Netlify CNAME value is required." }, { status: 400 });
+  }
+
+  const explicitTarget = type === "vercel" ? vercelTarget : type === "netlify" ? netlifyTarget : undefined;
+  const target = buildTarget(type, dbUser[0].githubUsername, explicitTarget);
   const cfRecordId = await createCnameRecord(subdomain, target);
 
   let cfTxtRecordId: string | null = null;
-  const txtValue = type === "vercel" && vercelTxtValue ? vercelTxtValue.trim() : null;
-  if (txtValue) {
-    cfTxtRecordId = await createTxtRecord("_vercel", txtValue);
+  const vercelTxt = type === "vercel" && vercelTxtValue ? vercelTxtValue.trim() : null;
+  let netlifyTxt: string | null = null;
+  let netlifyTxtRecordName: string | null = null;
+
+  if (vercelTxt) {
+    cfTxtRecordId = await createTxtRecord("_vercel", vercelTxt);
+  } else if (type === "netlify" && netlifyTxtValue) {
+    netlifyTxt = netlifyTxtValue.trim();
+    netlifyTxtRecordName = (netlifyTxtName?.trim() || "subdomain-owner-verification").trim();
+    cfTxtRecordId = await createTxtRecord(netlifyTxtRecordName, netlifyTxt);
   }
 
   const newId = randomUUID();
@@ -90,7 +109,9 @@ export async function POST(req: NextRequest) {
     target,
     cfRecordId,
     cfTxtRecordId,
-    vercelTxtValue: txtValue,
+    vercelTxtValue: vercelTxt,
+    netlifyTxtName: netlifyTxtRecordName,
+    netlifyTxtValue: netlifyTxt,
     status: "active",
   });
 

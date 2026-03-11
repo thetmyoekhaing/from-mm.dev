@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 
-type DeployType = "github_pages" | "vercel";
+type DeployType = "github_pages" | "vercel" | "netlify";
 
 export default function RegisterPage() {
   const { data: session } = useSession();
@@ -15,6 +16,9 @@ export default function RegisterPage() {
   const [type, setType] = useState<DeployType>("github_pages");
   const [vercelTarget, setVercelTarget] = useState("");
   const [vercelTxtValue, setVercelTxtValue] = useState("");
+  const [netlifyTarget, setNetlifyTarget] = useState("");
+  const [netlifyTxtName, setNetlifyTxtName] = useState("");
+  const [netlifyTxtValue, setNetlifyTxtValue] = useState("");
   const [availability, setAvailability] = useState<"idle" | "checking" | "available" | "taken" | "invalid">("idle");
   const [availabilityMsg, setAvailabilityMsg] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -61,6 +65,12 @@ export default function RegisterPage() {
     return () => clearTimeout(timer);
   }, [subdomain, checkAvailability]);
 
+  useEffect(() => {
+    if (type !== "netlify") return;
+    if (netlifyTxtName.trim()) return;
+    setNetlifyTxtName("subdomain-owner-verification");
+  }, [type, subdomain, netlifyTxtName]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
@@ -69,7 +79,15 @@ export default function RegisterPage() {
       const res = await fetch("/api/subdomains", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subdomain, type, vercelTarget: type === "vercel" ? vercelTarget : undefined, vercelTxtValue: type === "vercel" && vercelTxtValue ? vercelTxtValue : undefined }),
+        body: JSON.stringify({
+          subdomain,
+          type,
+          vercelTarget: type === "vercel" ? vercelTarget : undefined,
+          vercelTxtValue: type === "vercel" && vercelTxtValue ? vercelTxtValue : undefined,
+          netlifyTarget: type === "netlify" ? netlifyTarget : undefined,
+          netlifyTxtName: type === "netlify" && netlifyTxtName ? netlifyTxtName : undefined,
+          netlifyTxtValue: type === "netlify" && netlifyTxtValue ? netlifyTxtValue : undefined,
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -83,7 +101,12 @@ export default function RegisterPage() {
   }
 
   if (success) {
-    const docsLink = success.type === "github_pages" ? "/docs/github-pages" : "/docs/vercel";
+    const docsLink =
+      success.type === "github_pages"
+        ? "/docs/github-pages"
+        : success.type === "vercel"
+          ? "/docs/vercel"
+          : "/docs/netlify";
     return (
       <div className="min-h-screen bg-white dark:bg-zinc-950 flex items-center justify-center px-6">
         <div className="max-w-lg w-full text-center">
@@ -163,8 +186,8 @@ export default function RegisterPage() {
           {/* Type selector */}
           <div>
             <label className="block text-sm font-medium mb-2">Deploy target</label>
-            <div className="grid grid-cols-2 gap-3">
-              {(["github_pages", "vercel"] as DeployType[]).map((t) => (
+            <div className="grid grid-cols-3 gap-3">
+              {(["github_pages", "vercel", "netlify"] as DeployType[]).map((t) => (
                 <button
                   key={t}
                   type="button"
@@ -174,16 +197,29 @@ export default function RegisterPage() {
                     : "border-zinc-200 dark:border-zinc-700 hover:border-zinc-400"
                     }`}
                 >
-                  {t === "github_pages" ? "🐙 GitHub Pages" : "▲ Vercel"}
+                  {t === "github_pages" ? (
+                    "🐙 GitHub Pages"
+                  ) : t === "vercel" ? (
+                    "▲ Vercel"
+                  ) : (
+                    <span className="inline-flex items-center gap-2">
+                      <Image src="/netlify.svg" alt="Netlify" width={16} height={16} />
+                      Netlify
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
             <p className="text-xs text-zinc-400 mt-2">
               {type === "github_pages"
                 ? `Points to: ${githubUsername || "your-username"}.github.io`
-                : vercelTarget
-                  ? `Points to: ${vercelTarget}`
-                  : "Enter your Vercel CNAME value below"}
+                : type === "vercel"
+                  ? vercelTarget
+                    ? `Points to: ${vercelTarget}`
+                    : "Enter your Vercel CNAME value below"
+                  : netlifyTarget
+                    ? `Points to: ${netlifyTarget}`
+                    : "Enter your Netlify CNAME value below"}
             </p>
           </div>
 
@@ -205,6 +241,64 @@ export default function RegisterPage() {
                 Find this in your Vercel project →{" "}
                 <strong className="text-zinc-600 dark:text-zinc-300">Settings → Domains</strong> → add your subdomain → copy the CNAME value shown.
               </p>
+            </div>
+          )}
+
+          {/* Netlify CNAME input */}
+          {type === "netlify" && (
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Netlify CNAME value
+              </label>
+              <input
+                type="text"
+                value={netlifyTarget}
+                onChange={(e) => setNetlifyTarget(e.target.value.trim())}
+                placeholder="your-site.netlify.app"
+                className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-zinc-400 font-mono"
+                required={type === "netlify"}
+              />
+              <p className="text-xs text-zinc-400 mt-1.5">
+                Find this in Netlify → <strong className="text-zinc-600 dark:text-zinc-300">Site settings → Domain management</strong> → add your subdomain → copy the CNAME target shown.
+              </p>
+            </div>
+          )}
+
+          {/* Netlify TXT verification (optional) */}
+          {type === "netlify" && (
+            <div className="flex flex-col gap-3">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Netlify TXT record name{" "}
+                  <span className="text-zinc-400 font-normal">(optional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={netlifyTxtName}
+                  onChange={(e) => setNetlifyTxtName(e.target.value.trim())}
+                  placeholder="subdomain-owner-verification"
+                  className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-zinc-400 font-mono"
+                />
+                <p className="text-xs text-zinc-400 mt-1.5">
+                  If Netlify says the domain is already registered, it will usually give you a TXT record at the root (host like <code className="bg-zinc-100 dark:bg-zinc-800 px-1 rounded">subdomain-owner-verification</code>).
+                </p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Netlify TXT verification value{" "}
+                  <span className="text-zinc-400 font-normal">(optional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={netlifyTxtValue}
+                  onChange={(e) => setNetlifyTxtValue(e.target.value.trim())}
+                  placeholder="11a0ed99c4953053b7b7dab358926e7f"
+                  className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-zinc-400 font-mono"
+                />
+                <p className="text-xs text-zinc-400 mt-1.5">
+                  Copy the TXT value Netlify shows you and paste it here.
+                </p>
+              </div>
             </div>
           )}
 
@@ -234,7 +328,14 @@ export default function RegisterPage() {
 
           <button
             type="submit"
-            disabled={submitting || availability === "taken" || availability === "invalid" || availability === "checking" || (type === "vercel" && !vercelTarget)}
+            disabled={
+              submitting ||
+              availability === "taken" ||
+              availability === "invalid" ||
+              availability === "checking" ||
+              (type === "vercel" && !vercelTarget) ||
+              (type === "netlify" && !netlifyTarget)
+            }
             className="rounded-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 px-6 py-3 font-semibold disabled:opacity-50 hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors"
           >
             {submitting ? "Registering…" : "Register subdomain"}

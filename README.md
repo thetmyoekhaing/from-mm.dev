@@ -5,7 +5,7 @@ Free subdomains for Myanmar developers. Get `yourname.from-mm.dev` pointing to y
 ## Features
 
 - 🔐 Sign in with GitHub — your username is suggested as your subdomain
-- 🌐 Supports **GitHub Pages** and **Vercel** as deploy targets
+- 🌐 Supports **GitHub Pages**, **Vercel**, and **Netlify** as deploy targets
 - ⚡ Instant DNS via Cloudflare API — CNAME created automatically on registration
 - 📋 Up to 5 subdomains per account
 - 🚨 Public abuse reporting
@@ -90,7 +90,8 @@ app/
 ├── docs/
 │   ├── page.tsx                    # Docs index + FAQ
 │   ├── github-pages/page.tsx       # GitHub Pages setup guide
-│   └── vercel/page.tsx             # Vercel setup guide
+│   ├── vercel/page.tsx             # Vercel setup guide
+│   └── netlify/page.tsx            # Netlify setup guide
 ├── report/[subdomain]/page.tsx     # Abuse report form
 └── api/
     ├── auth/[...nextauth]/route.ts # Auth.js handler

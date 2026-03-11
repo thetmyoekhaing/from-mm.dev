@@ -9,6 +9,9 @@ import { z } from "zod";
 const patchSchema = z.object({
   vercelTarget: z.string().min(1).optional(),
   vercelTxtValue: z.string().min(1).optional(),
+  netlifyTarget: z.string().min(1).optional(),
+  netlifyTxtName: z.string().min(1).optional(),
+  netlifyTxtValue: z.string().min(1).optional(),
 });
 
 export async function PATCH(
@@ -28,8 +31,8 @@ export async function PATCH(
     .limit(1);
 
   if (!record[0]) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (record[0].type !== "vercel") {
-    return NextResponse.json({ error: "Only Vercel subdomains can be updated." }, { status: 400 });
+  if (record[0].type === "github_pages") {
+    return NextResponse.json({ error: "GitHub Pages subdomains cannot be updated." }, { status: 400 });
   }
 
   const body = await req.json();
@@ -38,23 +41,53 @@ export async function PATCH(
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
 
-  const { vercelTarget, vercelTxtValue } = parsed.data;
+  const { vercelTarget, vercelTxtValue, netlifyTarget, netlifyTxtName, netlifyTxtValue } = parsed.data;
   const updates: Partial<typeof record[0]> = {};
 
-  if (vercelTarget && record[0].cfRecordId) {
-    await updateCnameRecord(record[0].cfRecordId, record[0].subdomain, vercelTarget);
-    updates.target = vercelTarget;
+  if (record[0].type === "vercel") {
+    if (vercelTarget && record[0].cfRecordId) {
+      await updateCnameRecord(record[0].cfRecordId, record[0].subdomain, vercelTarget);
+      updates.target = vercelTarget;
+    }
+
+    if (vercelTxtValue) {
+      const trimmed = vercelTxtValue.trim();
+      if (record[0].cfTxtRecordId) {
+        await updateTxtRecord(record[0].cfTxtRecordId, "_vercel", trimmed);
+      } else {
+        const newTxtId = await createTxtRecord("_vercel", trimmed);
+        updates.cfTxtRecordId = newTxtId;
+      }
+      updates.vercelTxtValue = trimmed;
+    }
   }
 
-  if (vercelTxtValue) {
-    const trimmed = vercelTxtValue.trim();
-    if (record[0].cfTxtRecordId) {
-      await updateTxtRecord(record[0].cfTxtRecordId, trimmed);
-    } else {
-      const newTxtId = await createTxtRecord("_vercel", trimmed);
-      updates.cfTxtRecordId = newTxtId;
+  if (record[0].type === "netlify") {
+    if (netlifyTarget && record[0].cfRecordId) {
+      await updateCnameRecord(record[0].cfRecordId, record[0].subdomain, netlifyTarget);
+      updates.target = netlifyTarget;
     }
-    updates.vercelTxtValue = trimmed;
+
+    const desiredTxtName = (netlifyTxtName?.trim() || record[0].netlifyTxtName?.trim() || "subdomain-owner-verification").trim();
+    const desiredTxtValue = netlifyTxtValue?.trim();
+
+    if (netlifyTxtName || netlifyTxtValue) {
+      if (record[0].cfTxtRecordId) {
+        const nextValue = desiredTxtValue ?? record[0].netlifyTxtValue ?? "";
+        if (!nextValue) {
+          return NextResponse.json({ error: "TXT value is required." }, { status: 400 });
+        }
+        await updateTxtRecord(record[0].cfTxtRecordId, desiredTxtName, nextValue);
+      } else {
+        if (!desiredTxtValue) {
+          return NextResponse.json({ error: "TXT value is required." }, { status: 400 });
+        }
+        const newTxtId = await createTxtRecord(desiredTxtName, desiredTxtValue);
+        updates.cfTxtRecordId = newTxtId;
+      }
+      updates.netlifyTxtName = desiredTxtName;
+      if (desiredTxtValue) updates.netlifyTxtValue = desiredTxtValue;
+    }
   }
 
   if (Object.keys(updates).length === 0) {

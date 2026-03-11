@@ -20,7 +20,12 @@ export function validateSubdomain(subdomain: string): { valid: boolean; error?: 
   return { valid: true };
 }
 
-export function buildTarget(type: "github_pages" | "vercel", githubUsername: string, vercelTarget?: string): string {
+export function buildTarget(
+  type: "github_pages" | "vercel" | "netlify",
+  githubUsername: string,
+  explicitTarget?: string
+): string {
   if (type === "github_pages") return `${githubUsername}.github.io`;
-  return vercelTarget ?? "cname.vercel-dns.com";
+  if (type === "vercel") return explicitTarget ?? "cname.vercel-dns.com";
+  return explicitTarget ?? "";
 }

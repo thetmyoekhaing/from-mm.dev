@@ -14,6 +14,12 @@ export default function DocsIndex() {
       title: "Vercel",
       description: "Connect your subdomain to a Vercel deployment. Zero-config HTTPS.",
     },
+    {
+      href: "/docs/netlify",
+      icon: "🟩",
+      title: "Netlify",
+      description: "Connect your subdomain to a Netlify site. Automatic HTTPS after verification.",
+    },
   ];
 
   const faqs = [

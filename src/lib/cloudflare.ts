@@ -54,12 +54,12 @@ export async function updateCnameRecord(recordId: string, subdomain: string, tar
   }
 }
 
-export async function updateTxtRecord(recordId: string, content: string): Promise<void> {
+export async function updateTxtRecord(recordId: string, name: string, content: string): Promise<void> {
   const zoneId = process.env.CLOUDFLARE_ZONE_ID!;
   const res = await fetch(`${CF_API}/zones/${zoneId}/dns_records/${recordId}`, {
     method: "PUT",
     headers: headers(),
-    body: JSON.stringify({ type: "TXT", name: "_vercel", content, ttl: 1 }),
+    body: JSON.stringify({ type: "TXT", name, content, ttl: 1 }),
   });
   const data = await res.json();
   if (!data.success) {

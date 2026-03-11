@@ -10,6 +10,7 @@ import {
 export const subdomainTypeEnum = pgEnum("subdomain_type", [
   "github_pages",
   "vercel",
+  "netlify",
 ]);
 export const subdomainStatusEnum = pgEnum("subdomain_status", [
   "active",
@@ -37,6 +38,8 @@ export const subdomains = pgTable("subdomains", {
   cfRecordId: text("cf_record_id"),
   cfTxtRecordId: text("cf_txt_record_id"),
   vercelTxtValue: text("vercel_txt_value"),
+  netlifyTxtName: text("netlify_txt_name"),
+  netlifyTxtValue: text("netlify_txt_value"),
   status: subdomainStatusEnum("status").default("active").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
