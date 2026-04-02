@@ -12,6 +12,7 @@ import { sql } from "drizzle-orm";
 export const subdomainTypeEnum = pgEnum("subdomain_type", [
   "github_pages",
   "vercel",
+  "netlify",
 ]);
 export const subdomainStatusEnum = pgEnum("subdomain_status", [
   "active",

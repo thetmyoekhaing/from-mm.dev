@@ -14,6 +14,12 @@ export default function DocsIndex() {
       title: "Vercel",
       description: "Connect your subdomain to a Vercel deployment. Zero-config HTTPS.",
     },
+    {
+      href: "/docs/netlify",
+      icon: "🌐",
+      title: "Netlify",
+      description: "Connect your subdomain to a Netlify site using the same custom-domain flow.",
+    },
   ];
 
   const faqs = [
@@ -27,11 +33,11 @@ export default function DocsIndex() {
     },
     {
       q: "Can I use the same subdomain for multiple projects?",
-      a: "No — each subdomain maps to a single target. You can delete and re-register a subdomain if you need to change the target.",
+      a: "No - each subdomain maps to a single target. You can delete and re-register a subdomain if you need to change the target.",
     },
     {
       q: "What is the subdomain format?",
-      a: "3–63 lowercase characters: letters, numbers, and hyphens only. No leading or trailing hyphens.",
+      a: "3-63 lowercase characters: letters, numbers, and hyphens only. No leading or trailing hyphens.",
     },
     {
       q: "What happens if my subdomain is reported for abuse?",
@@ -67,7 +73,7 @@ export default function DocsIndex() {
         {/* Guides */}
         <section className="mb-14">
           <h2 className="text-xl font-semibold mb-5">Setup guides</h2>
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {guides.map((guide) => (
               <Link
                 key={guide.href}

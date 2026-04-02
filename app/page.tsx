@@ -1,7 +1,7 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Script from "next/script";
 import { useSession } from "next-auth/react";
 
 const examples = [
@@ -32,6 +32,44 @@ const steps = [
 export default function Home() {
   const { data: session } = useSession();
   const isLoggedIn = !!session?.user;
+  const buyMePizzaRef = useRef<HTMLDivElement | null>(null);
+  const [hasBuyMePizzaWidget, setHasBuyMePizzaWidget] = useState(false);
+
+  useEffect(() => {
+    const container = buyMePizzaRef.current;
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    const observer = new MutationObserver(() => {
+      if (container.childElementCount > 1 || container.querySelector("iframe, a, button")) {
+        setHasBuyMePizzaWidget(true);
+      }
+    });
+
+    observer.observe(container, { childList: true, subtree: true });
+
+    const script = document.createElement("script");
+    script.src = "https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js";
+    script.async = true;
+    script.setAttribute("data-name", "bmc-button");
+    script.setAttribute("data-slug", "tomari");
+    script.setAttribute("data-color", "#FF5F5F");
+    script.setAttribute("data-emoji", "🍕");
+    script.setAttribute("data-font", "Bree");
+    script.setAttribute("data-text", "Buy me a pizza");
+    script.setAttribute("data-outline-color", "#000000");
+    script.setAttribute("data-font-color", "#ffffff");
+    script.setAttribute("data-coffee-color", "#FFDD00");
+
+    container.appendChild(script);
+
+    return () => {
+      observer.disconnect();
+      container.innerHTML = "";
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50">
       {/* Nav */}
@@ -99,7 +137,7 @@ export default function Home() {
             href="/register"
             className="rounded-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 px-8 py-3 font-semibold hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors"
           >
-            Claim your subdomain — it&apos;s free
+            Claim your subdomain - it&apos;s free
           </Link>
           <Link
             href="/waiting-room"
@@ -163,7 +201,8 @@ export default function Home() {
           Ready to get your .dev domain?
         </h2>
         <p className="text-zinc-500 dark:text-zinc-400 mb-8">
-          Claim your subdomain, build your profile, and join Myanmar developers already using from-mm.dev.
+          Claim your subdomain, build your profile, and join Myanmar developers
+          already using from-mm.dev.
         </p>
         <Link
           href="/register"
@@ -180,31 +219,20 @@ export default function Home() {
           </p>
           <h2 className="mt-3 text-2xl font-bold">Buy me a pizza</h2>
           <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-            If from-mm.dev helps you, you can support tomari and help keep it running.
+            If from-mm.dev helps you, you can support tomari and help keep it
+            running.
           </p>
-          <div className="mt-6 flex justify-center">
-            <Script
-              src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js"
-              strategy="afterInteractive"
-              data-name="bmc-button"
-              data-slug="tomari"
-              data-color="#FF5F5F"
-              data-emoji="🍕"
-              data-font="Bree"
-              data-text="Buy me a pizza"
-              data-outline-color="#000000"
-              data-font-color="#ffffff"
-              data-coffee-color="#FFDD00"
-            />
-          </div>
-          <a
-            href="https://www.buymeacoffee.com/tomari"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 inline-flex text-sm text-green-600 hover:underline"
-          >
-            Open Buy Me a Coffee
-          </a>
+          <div ref={buyMePizzaRef} className="mt-0 flex justify-center" />
+          {!hasBuyMePizzaWidget ? (
+            <a
+              href="https://www.buymeacoffee.com/tomari"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex items-center rounded-full border-2 border-black bg-[#FF5F5F] px-5 py-3 text-sm font-semibold text-white shadow-sm transition-transform hover:scale-[1.02]"
+            >
+              Buy me a pizza
+            </a>
+          ) : null}
         </div>
       </section>
 

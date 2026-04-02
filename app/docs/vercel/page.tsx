@@ -48,7 +48,7 @@ export default function VercelDocs() {
             <Step number={3} title="Copy your Vercel CNAME value">
               <ol className="text-sm text-zinc-600 dark:text-zinc-400 flex flex-col gap-1.5 list-decimal list-inside">
                 <li>Click <strong className="text-zinc-900 dark:text-zinc-100">Add</strong> and enter your subdomain: <code className="bg-zinc-100 dark:bg-zinc-800 px-1.5 rounded font-mono text-sm">yourname.from-mm.dev</code></li>
-                <li>Vercel will show you a CNAME record to add — copy the <strong className="text-zinc-900 dark:text-zinc-100">Value</strong> (looks like <code className="bg-zinc-100 dark:bg-zinc-800 px-1.5 rounded font-mono text-sm">xxxxxxxxxxxxxxxx.vercel-dns-017.com</code>)</li>
+                <li>Vercel will show you a CNAME record to add - copy the <strong className="text-zinc-900 dark:text-zinc-100">Value</strong> (looks like <code className="bg-zinc-100 dark:bg-zinc-800 px-1.5 rounded font-mono text-sm">xxxxxxxxxxxxxxxx.vercel-dns-017.com</code>)</li>
                 <li>Paste that value into the <strong className="text-zinc-900 dark:text-zinc-100">Vercel CNAME value</strong> field on the from-mm.dev register page</li>
               </ol>
               <div className="mt-3 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 py-3 text-sm font-mono">

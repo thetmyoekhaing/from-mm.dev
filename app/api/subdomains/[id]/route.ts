@@ -7,7 +7,7 @@ import { deleteDnsRecord, updateCnameRecord, updateTxtRecord, createTxtRecord } 
 import { z } from "zod";
 
 const patchSchema = z.object({
-  vercelTarget: z.string().min(1).optional(),
+  customTarget: z.string().min(1).optional(),
   vercelTxtValue: z.string().min(1).optional(),
 });
 
@@ -28,8 +28,8 @@ export async function PATCH(
     .limit(1);
 
   if (!record[0]) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (record[0].type !== "vercel") {
-    return NextResponse.json({ error: "Only Vercel subdomains can be updated." }, { status: 400 });
+  if (record[0].type === "github_pages") {
+    return NextResponse.json({ error: "GitHub Pages subdomains cannot be updated here." }, { status: 400 });
   }
 
   const body = await req.json();
@@ -38,23 +38,24 @@ export async function PATCH(
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
 
-  const { vercelTarget, vercelTxtValue } = parsed.data;
+  const { customTarget, vercelTxtValue } = parsed.data;
   const updates: Partial<typeof record[0]> = {};
 
-  if (vercelTarget && record[0].cfRecordId) {
-    await updateCnameRecord(record[0].cfRecordId, record[0].subdomain, vercelTarget);
-    updates.target = vercelTarget;
+  if (customTarget && record[0].cfRecordId) {
+    await updateCnameRecord(record[0].cfRecordId, record[0].subdomain, customTarget);
+    updates.target = customTarget;
   }
 
-  if (vercelTxtValue) {
-    const trimmed = vercelTxtValue.trim();
+  if ((record[0].type === "vercel" || record[0].type === "netlify") && vercelTxtValue) {
+    const txtName = record[0].type === "vercel" ? "_vercel" : "subdomain-owner-verification";
+    const txtValue = vercelTxtValue.trim();
     if (record[0].cfTxtRecordId) {
-      await updateTxtRecord(record[0].cfTxtRecordId, trimmed);
+      await updateTxtRecord(record[0].cfTxtRecordId, txtName, txtValue);
     } else {
-      const newTxtId = await createTxtRecord("_vercel", trimmed);
+      const newTxtId = await createTxtRecord(txtName, txtValue);
       updates.cfTxtRecordId = newTxtId;
     }
-    updates.vercelTxtValue = trimmed;
+    updates.vercelTxtValue = txtValue;
   }
 
   if (Object.keys(updates).length === 0) {

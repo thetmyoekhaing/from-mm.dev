@@ -1,0 +1,1 @@
+ALTER TYPE "public"."subdomain_type" ADD VALUE 'netlify';

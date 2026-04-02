@@ -54,7 +54,7 @@ export default function GitHubPagesDocs() {
                 <li>Still in <strong className="text-zinc-900 dark:text-zinc-100">Settings → Pages</strong>, find the <strong className="text-zinc-900 dark:text-zinc-100">Custom domain</strong> field</li>
                 <li>Enter your subdomain: <code className="bg-zinc-100 dark:bg-zinc-800 px-1.5 rounded font-mono text-sm">yourname.from-mm.dev</code></li>
                 <li>Click <strong className="text-zinc-900 dark:text-zinc-100">Save</strong></li>
-                <li>GitHub will check the DNS records — this should pass automatically since we already created the CNAME</li>
+                <li>GitHub will check the DNS records - this should pass automatically since we already created the CNAME</li>
               </ol>
             </Step>
 
