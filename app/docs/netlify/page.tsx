@@ -100,34 +100,8 @@ export default function NetlifyDocs() {
               </ol>
             </Step>
 
-            <Step number={4} title="Copy the DNS target Netlify gives you">
-              <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-3">
-                Netlify will usually provide a target hostname for your custom
-                domain. That is the value from-mm.dev needs to point at.
-              </p>
-              <div className="rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 py-3 text-sm font-mono">
-                <span className="text-zinc-400">CNAME</span>{" "}
-                <span className="text-green-600">yourname.from-mm.dev</span>{" "}
-                <span className="text-zinc-400">→</span>{" "}
-                <span className="text-zinc-900 dark:text-zinc-100">
-                  your-site.netlify.app
-                </span>
-              </div>
-              <p className="text-xs text-zinc-400 mt-2">
-                The exact target may differ depending on your Netlify site setup.
-              </p>
-            </Step>
 
-            <Step number={5} title="Paste the target into from-mm.dev">
-              <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                During registration on from-mm.dev, select{" "}
-                <strong className="text-zinc-900 dark:text-zinc-100">Netlify</strong>{" "}
-                and paste the target hostname Netlify gives you. from-mm.dev will
-                create the CNAME record for you.
-              </p>
-            </Step>
-
-            <Step number={6} title="Add the Netlify TXT verification value if requested">
+            <Step number={4} title="Add the Netlify TXT verification value if requested">
               <p className="text-sm text-zinc-600 dark:text-zinc-400">
                 If Netlify asks for TXT verification, copy the TXT value it shows
                 and paste it into from-mm.dev. from-mm.dev will create the TXT
@@ -138,7 +112,7 @@ export default function NetlifyDocs() {
               </p>
             </Step>
 
-            <Step number={7} title="Verify HTTPS">
+            <Step number={5} title="Verify HTTPS">
               <p className="text-sm text-zinc-600 dark:text-zinc-400">
                 After DNS resolves correctly, Netlify should provision HTTPS for
                 your subdomain automatically. If the certificate is still pending,

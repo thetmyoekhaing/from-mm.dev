@@ -8,6 +8,8 @@ import DashboardClient from "./client";
 import ProfileEditor from "./profile-editor";
 import ProjectsManager from "./projects-manager";
 
+import DashboardTabs from "./dashboard-tabs";
+
 export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user) redirect("/api/auth/signin");
@@ -78,41 +80,44 @@ export default async function DashboardPage() {
             <StatCard label="Project clicks" value={String(totalProjectClicks)} />
           </section>
 
-          <ProfileEditor user={userRecord} />
-          <ProjectsManager initialProjects={userProjects} />
+          <DashboardTabs
+            subdomains={
+              <section className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-6">
+                <div className="mb-6 flex items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-xl font-semibold">Your subdomains</h2>
+                    <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                      {userSubdomains.length} / 5 used
+                    </p>
+                  </div>
+                  {userSubdomains.length < 5 ? (
+                    <Link
+                      href="/register"
+                      className="rounded-full bg-zinc-900 px-5 py-2 text-sm font-medium text-zinc-50 transition-colors hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                    >
+                      + Add subdomain
+                    </Link>
+                  ) : null}
+                </div>
 
-          <section className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-6">
-            <div className="mb-6 flex items-center justify-between gap-4">
-              <div>
-                <h2 className="text-xl font-semibold">Your subdomains</h2>
-                <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                  {userSubdomains.length} / 5 used
-                </p>
-              </div>
-              {userSubdomains.length < 5 ? (
-                <Link
-                  href="/register"
-                  className="rounded-full bg-zinc-900 px-5 py-2 text-sm font-medium text-zinc-50 transition-colors hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
-                >
-                  + Add subdomain
-                </Link>
-              ) : null}
-            </div>
-
-            {userSubdomains.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-zinc-200 py-16 text-center dark:border-zinc-800">
-                <p className="mb-4 text-zinc-400">You don&apos;t have any subdomains yet.</p>
-                <Link
-                  href="/register"
-                  className="rounded-full bg-zinc-900 px-6 py-2.5 text-sm font-medium text-zinc-50 transition-colors hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
-                >
-                  Claim your first subdomain
-                </Link>
-              </div>
-            ) : (
-              <DashboardClient subdomains={userSubdomains} />
-            )}
-          </section>
+                {userSubdomains.length === 0 ? (
+                  <div className="rounded-2xl border border-dashed border-zinc-200 py-16 text-center dark:border-zinc-800">
+                    <p className="mb-4 text-zinc-400">You don&apos;t have any subdomains yet.</p>
+                    <Link
+                      href="/register"
+                      className="rounded-full bg-zinc-900 px-6 py-2.5 text-sm font-medium text-zinc-50 transition-colors hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                    >
+                      Claim your first subdomain
+                    </Link>
+                  </div>
+                ) : (
+                  <DashboardClient subdomains={userSubdomains} />
+                )}
+              </section>
+            }
+            profile={<ProfileEditor user={userRecord} />}
+            projects={<ProjectsManager initialProjects={userProjects} />}
+          />
         </div>
       </main>
     </div>
