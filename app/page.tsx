@@ -40,6 +40,12 @@ export default function Home() {
         </span>
         <div className="flex items-center gap-4 text-sm">
           <Link
+            href="/waiting-room"
+            className="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+          >
+            Waiting room
+          </Link>
+          <Link
             href="/docs"
             className="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
@@ -93,6 +99,12 @@ export default function Home() {
             className="rounded-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 px-8 py-3 font-semibold hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors"
           >
             Claim your subdomain — it&apos;s free
+          </Link>
+          <Link
+            href="/waiting-room"
+            className="rounded-full bg-green-600 text-white px-8 py-3 font-semibold hover:bg-green-700 transition-colors"
+          >
+            Explore the waiting room
           </Link>
           <Link
             href="/docs"
@@ -150,7 +162,7 @@ export default function Home() {
           Ready to get your .dev domain?
         </h2>
         <p className="text-zinc-500 dark:text-zinc-400 mb-8">
-          Join Myanmar developers already using from-mm.dev.
+          Claim your subdomain, build your profile, and join Myanmar developers already using from-mm.dev.
         </p>
         <Link
           href="/register"
