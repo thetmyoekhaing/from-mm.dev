@@ -9,16 +9,23 @@ type DeployType = "github_pages" | "vercel" | "netlify";
 export default function RegisterPage() {
   const { data: session } = useSession();
   const githubUsername =
-    (session?.user as ({ githubUsername?: string }) | undefined)?.githubUsername ?? "";
+    (session?.user as { githubUsername?: string } | undefined)
+      ?.githubUsername ?? "";
 
   const [subdomain, setSubdomain] = useState("");
   const [type, setType] = useState<DeployType>("github_pages");
   const [customTarget, setCustomTarget] = useState("");
   const [vercelTxtValue, setVercelTxtValue] = useState("");
-  const [availability, setAvailability] = useState<"idle" | "checking" | "available" | "taken" | "invalid">("idle");
+  const [availability, setAvailability] = useState<
+    "idle" | "checking" | "available" | "taken" | "invalid"
+  >("idle");
   const [availabilityMsg, setAvailabilityMsg] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState<{ url: string; type: DeployType; target: string } | null>(null);
+  const [success, setSuccess] = useState<{
+    url: string;
+    type: DeployType;
+    target: string;
+  } | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -29,7 +36,7 @@ export default function RegisterPage() {
       .then((data) => {
         if (data.available) setSubdomain(githubUsername);
       })
-      .catch(() => { });
+      .catch(() => {});
   }, [githubUsername, subdomain]);
 
   const checkAvailability = useCallback(async (value: string) => {
@@ -39,7 +46,9 @@ export default function RegisterPage() {
     }
     setAvailability("checking");
     try {
-      const res = await fetch(`/api/subdomains?check=${encodeURIComponent(value)}`);
+      const res = await fetch(
+        `/api/subdomains?check=${encodeURIComponent(value)}`,
+      );
       const data = await res.json();
       if (data.error) {
         setAvailability("invalid");
@@ -74,7 +83,9 @@ export default function RegisterPage() {
           type,
           customTarget: type === "github_pages" ? undefined : customTarget,
           vercelTxtValue:
-            type !== "github_pages" && vercelTxtValue ? vercelTxtValue : undefined,
+            type !== "github_pages" && vercelTxtValue
+              ? vercelTxtValue
+              : undefined,
         }),
       });
       const raw = await res.text();
@@ -87,7 +98,9 @@ export default function RegisterPage() {
         }
       }
       if (!res.ok) {
-        setError(typeof data.error === "string" ? data.error : "Something went wrong.");
+        setError(
+          typeof data.error === "string" ? data.error : "Something went wrong.",
+        );
       } else {
         setSuccess({
           url: String(data.url),
@@ -96,7 +109,9 @@ export default function RegisterPage() {
         });
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Something went wrong.");
+      setError(
+        error instanceof Error ? error.message : "Something went wrong.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -117,7 +132,8 @@ export default function RegisterPage() {
           </div>
           <h1 className="text-2xl font-bold mb-3">You&apos;re all set!</h1>
           <p className="text-zinc-500 dark:text-zinc-400 mb-6">
-            Your subdomain is registered. DNS may take up to a few minutes to propagate.
+            Your subdomain is registered. DNS may take up to a few minutes to
+            propagate.
           </p>
           <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-5 py-4 mb-8 font-mono text-sm break-all">
             <p className="text-green-600 font-bold text-lg">{success.url}</p>
@@ -153,7 +169,10 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 flex items-center justify-center px-6">
       <div className="max-w-md w-full">
-        <Link href="/" className="text-sm text-zinc-400 hover:text-zinc-600 transition-colors mb-8 block">
+        <Link
+          href="/"
+          className="text-sm text-zinc-400 hover:text-zinc-600 transition-colors mb-8 block"
+        >
           ← Back
         </Link>
         <h1 className="text-3xl font-bold mb-2">Claim your subdomain</h1>
@@ -187,25 +206,30 @@ export default function RegisterPage() {
 
           {/* Type selector */}
           <div>
-            <label className="block text-sm font-medium mb-2">Deploy target</label>
+            <label className="block text-sm font-medium mb-2">
+              Deploy target
+            </label>
             <div className="grid grid-cols-3 gap-3">
-              {(["github_pages", "vercel", "netlify"] as DeployType[]).map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setType(t)}
-                  className={`rounded-xl border px-4 py-3 text-sm font-medium transition-colors text-left ${type === t
-                    ? "border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-zinc-50 dark:text-zinc-900"
-                    : "border-zinc-200 dark:border-zinc-700 hover:border-zinc-400"
+              {(["github_pages", "vercel", "netlify"] as DeployType[]).map(
+                (t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setType(t)}
+                    className={`rounded-xl border px-4 py-3 text-sm font-medium transition-colors text-left ${
+                      type === t
+                        ? "border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-zinc-50 dark:text-zinc-900"
+                        : "border-zinc-200 dark:border-zinc-700 hover:border-zinc-400"
                     }`}
-                >
-                  {t === "github_pages"
-                    ? "🐙 GitHub Pages"
-                    : t === "vercel"
-                      ? "▲ Vercel"
-                      : "🌐 Netlify"}
-                </button>
-              ))}
+                  >
+                    {t === "github_pages"
+                      ? "🐙 GitHub Pages"
+                      : t === "vercel"
+                        ? "▲ Vercel"
+                        : "🌐 Netlify"}
+                  </button>
+                ),
+              )}
             </div>
             <p className="text-xs text-zinc-400 mt-2">
               {type === "github_pages"
@@ -240,25 +264,31 @@ export default function RegisterPage() {
                 {type === "vercel" ? (
                   <>
                     Find this in your Vercel project →{" "}
-                    <strong className="text-zinc-600 dark:text-zinc-300">Settings → Domains</strong> → add your subdomain → copy the CNAME value shown.
+                    <strong className="text-zinc-600 dark:text-zinc-300">
+                      Settings → Domains
+                    </strong>{" "}
+                    → add your subdomain → copy the CNAME value shown.
                   </>
                 ) : (
                   <>
                     Find this in your Netlify site →{" "}
-                    <strong className="text-zinc-600 dark:text-zinc-300">Site configuration → Domain management</strong> → add your subdomain → copy the hostname Netlify shows.
+                    <strong className="text-zinc-600 dark:text-zinc-300">
+                      Site configuration → Domain management
+                    </strong>{" "}
+                    → add your subdomain → copy the hostname Netlify shows.
                   </>
                 )}
               </p>
             </div>
           )}
 
-
-
           {/* TXT verification input */}
           {(type === "vercel" || type === "netlify") && (
             <div>
               <label className="block text-sm font-medium mb-2">
-                {type === "vercel" ? "Vercel TXT verification value" : "Netlify TXT verification value"}{" "}
+                {type === "vercel"
+                  ? "Vercel TXT verification value"
+                  : "Netlify TXT verification value"}{" "}
               </label>
               <input
                 type="text"
@@ -272,9 +302,28 @@ export default function RegisterPage() {
                 className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-zinc-400 font-mono"
               />
               <p className="text-xs text-zinc-400 mt-1.5">
-                {type === "vercel"
-                  ? <>For project verification, copy the <strong className="text-zinc-600 dark:text-zinc-300">TXT value</strong> from Vercel for <code className="bg-zinc-100 dark:bg-zinc-800 px-1 rounded">_vercel</code>.</>
-                  : <>If Netlify requires verification, paste the TXT value here. from-mm.dev will create the TXT record using the fixed name <code className="bg-zinc-100 dark:bg-zinc-800 px-1 rounded">subdomain-owner-verification</code>.</>}
+                {type === "vercel" ? (
+                  <>
+                    For project verification, copy the{" "}
+                    <strong className="text-zinc-600 dark:text-zinc-300">
+                      TXT value
+                    </strong>{" "}
+                    from Vercel for{" "}
+                    <code className="bg-zinc-100 dark:bg-zinc-800 px-1 rounded">
+                      _vercel
+                    </code>
+                    .
+                  </>
+                ) : (
+                  <>
+                    If Netlify requires verification, paste the TXT value here.
+                    from-mm.dev will create the TXT record using the fixed name{" "}
+                    <code className="bg-zinc-100 dark:bg-zinc-800 px-1 rounded">
+                      subdomain-owner-verification
+                    </code>
+                    .
+                  </>
+                )}
               </p>
             </div>
           )}
@@ -288,7 +337,7 @@ export default function RegisterPage() {
               availability === "taken" ||
               availability === "invalid" ||
               availability === "checking" ||
-              (type !== "github_pages" && !customTarget)
+              (type === "vercel" && !customTarget)
             }
             className="rounded-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 px-6 py-3 font-semibold disabled:opacity-50 hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors"
           >
