@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
     repoUrl: data.repoUrl || null,
     liveUrl: data.liveUrl || null,
     featured: data.featured,
+    clickCount: 0,
     createdAt: new Date(),
     updatedAt: new Date(),
   };

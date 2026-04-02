@@ -254,6 +254,9 @@ export default function ProjectsManager({ initialProjects }: ProjectsManagerProp
                   <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
                     {project.description}
                   </p>
+                  <p className="mt-3 text-xs text-zinc-400">
+                    {project.clickCount} tracked clicks
+                  </p>
                   {project.techStack.length > 0 ? (
                     <div className="mt-3 flex flex-wrap gap-2">
                       {project.techStack.map((item) => (

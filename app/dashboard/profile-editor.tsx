@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { User } from "@/db/schema";
+import { getDeveloperProfilePath } from "@/lib/developers";
 
 type ProfilePayload = {
   name: string;
@@ -203,9 +204,17 @@ export default function ProfileEditor({ user }: ProfileEditorProps) {
         {success ? <p className="text-sm text-green-600">{success}</p> : null}
 
         <div className="flex items-center justify-between gap-3">
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            GitHub profile: @{user.githubUsername}
-          </p>
+          <div className="text-xs text-zinc-500 dark:text-zinc-400">
+            <p>GitHub profile: @{user.githubUsername}</p>
+            <a
+              href={getDeveloperProfilePath(user.githubUsername)}
+              target="_blank"
+              rel="noreferrer"
+              className="text-green-600 hover:underline"
+            >
+              Open public profile
+            </a>
+          </div>
           <button
             type="submit"
             disabled={saving}

@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { projects, subdomains, users } from "@/db/schema";
+import TrackView from "@/components/analytics/track-view";
+import TrackedExternalLink from "@/components/analytics/tracked-external-link";
 import {
   formatPreference,
   getDeveloperProfilePath,
@@ -38,6 +40,12 @@ export default async function DeveloperProfilePage({
 
   return (
     <div className="min-h-screen bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
+      <TrackView
+        event={{ type: "profile_view", githubUsername: developer.githubUsername }}
+        dedupeKey={`profile-view:${developer.githubUsername}`}
+        mode="immediate"
+      />
+
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
         <Link href="/" className="text-lg font-bold tracking-tight">
           <span className="text-green-600">from</span>-mm.dev
@@ -96,14 +104,16 @@ export default async function DeveloperProfilePage({
 
             <div className="flex flex-wrap gap-3">
               {primaryPortfolioUrl ? (
-                <a
+                <TrackedExternalLink
                   href={primaryPortfolioUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  event={{
+                    type: "portfolio_click",
+                    githubUsername: developer.githubUsername,
+                  }}
                   className="rounded-full bg-green-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-green-700"
                 >
                   Visit portfolio
-                </a>
+                </TrackedExternalLink>
               ) : null}
               {developer.linkedinUrl ? (
                 <a
@@ -192,24 +202,22 @@ export default async function DeveloperProfilePage({
                     ) : null}
                     <div className="mt-5 flex flex-wrap gap-3">
                       {project.repoUrl ? (
-                        <a
+                        <TrackedExternalLink
                           href={project.repoUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          event={{ type: "project_click", projectId: project.id }}
                           className="rounded-full border border-zinc-200 px-4 py-2 text-sm font-medium transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900"
                         >
                           Source code
-                        </a>
+                        </TrackedExternalLink>
                       ) : null}
                       {project.liveUrl ? (
-                        <a
+                        <TrackedExternalLink
                           href={project.liveUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          event={{ type: "project_click", projectId: project.id }}
                           className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-50 transition-colors hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
                         >
                           Live demo
-                        </a>
+                        </TrackedExternalLink>
                       ) : null}
                     </div>
                   </article>
@@ -230,15 +238,17 @@ export default async function DeveloperProfilePage({
                   developerSubdomains.map((subdomain) => {
                     const href = `https://${subdomain.subdomain}.from-mm.dev`;
                     return (
-                      <a
+                      <TrackedExternalLink
                         key={subdomain.id}
                         href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        event={{
+                          type: "portfolio_click",
+                          githubUsername: developer.githubUsername,
+                        }}
                         className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm font-mono text-green-600 transition-colors hover:border-green-300 dark:border-zinc-700 dark:bg-zinc-950"
                       >
                         {subdomain.subdomain}.from-mm.dev
-                      </a>
+                      </TrackedExternalLink>
                     );
                   })
                 )}
@@ -249,14 +259,16 @@ export default async function DeveloperProfilePage({
               <h2 className="text-xl font-semibold">Profile links</h2>
               <div className="mt-5 flex flex-col gap-3 text-sm">
                 {primaryPortfolioUrl ? (
-                  <a
+                  <TrackedExternalLink
                     href={primaryPortfolioUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    event={{
+                      type: "portfolio_click",
+                      githubUsername: developer.githubUsername,
+                    }}
                     className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 transition-colors hover:border-green-300 dark:border-zinc-700 dark:bg-zinc-950"
                   >
                     Portfolio
-                  </a>
+                  </TrackedExternalLink>
                 ) : null}
                 <a
                   href={`https://github.com/${developer.githubUsername}`}

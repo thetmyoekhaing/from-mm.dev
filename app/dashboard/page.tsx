@@ -27,6 +27,10 @@ export default async function DashboardPage() {
     .from(projects)
     .where(eq(projects.userId, sessionUser.id))
     .orderBy(desc(projects.featured), desc(projects.createdAt));
+  const totalProjectClicks = userProjects.reduce(
+    (sum, project) => sum + project.clickCount,
+    0
+  );
 
   if (!userRecord) redirect("/api/auth/signin");
 
@@ -67,6 +71,13 @@ export default async function DashboardPage() {
         </div>
 
         <div className="grid gap-6">
+          <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <StatCard label="Profile views" value={String(userRecord.profileViews)} />
+            <StatCard label="Portfolio clicks" value={String(userRecord.portfolioClicks)} />
+            <StatCard label="Waiting room views" value={String(userRecord.waitingRoomViews)} />
+            <StatCard label="Project clicks" value={String(totalProjectClicks)} />
+          </section>
+
           <ProfileEditor user={userRecord} />
           <ProjectsManager initialProjects={userProjects} />
 

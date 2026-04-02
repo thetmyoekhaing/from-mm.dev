@@ -3,6 +3,7 @@ import {
   text,
   timestamp,
   pgEnum,
+  integer,
   varchar,
   boolean,
 } from "drizzle-orm/pg-core";
@@ -32,6 +33,10 @@ export const users = pgTable("users", {
   portfolioUrl: text("portfolio_url"),
   linkedinUrl: text("linkedin_url"),
   availableForWork: boolean("available_for_work").notNull().default(false),
+  profileViews: integer("profile_views").notNull().default(0),
+  portfolioClicks: integer("portfolio_clicks").notNull().default(0),
+  waitingRoomViews: integer("waiting_room_views").notNull().default(0),
+  waitingRoomClicks: integer("waiting_room_clicks").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -72,6 +77,7 @@ export const projects = pgTable("projects", {
   repoUrl: text("repo_url"),
   liveUrl: text("live_url"),
   featured: boolean("featured").notNull().default(false),
+  clickCount: integer("click_count").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

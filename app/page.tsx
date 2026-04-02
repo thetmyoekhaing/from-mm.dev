@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Script from "next/script";
 import { useSession } from "next-auth/react";
 
 const examples = [
@@ -170,6 +171,41 @@ export default function Home() {
         >
           Get started for free
         </Link>
+      </section>
+
+      <section className="max-w-5xl mx-auto px-6 pb-16">
+        <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-6 py-8 text-center">
+          <p className="text-xs uppercase tracking-[0.25em] text-zinc-400">
+            Support the project
+          </p>
+          <h2 className="mt-3 text-2xl font-bold">Buy me a pizza</h2>
+          <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+            If from-mm.dev helps you, you can support tomari and help keep it running.
+          </p>
+          <div className="mt-6 flex justify-center">
+            <Script
+              src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js"
+              strategy="afterInteractive"
+              data-name="bmc-button"
+              data-slug="tomari"
+              data-color="#FF5F5F"
+              data-emoji="🍕"
+              data-font="Bree"
+              data-text="Buy me a pizza"
+              data-outline-color="#000000"
+              data-font-color="#ffffff"
+              data-coffee-color="#FFDD00"
+            />
+          </div>
+          <a
+            href="https://www.buymeacoffee.com/tomari"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex text-sm text-green-600 hover:underline"
+          >
+            Open Buy Me a Coffee
+          </a>
+        </div>
       </section>
 
       {/* Footer */}
