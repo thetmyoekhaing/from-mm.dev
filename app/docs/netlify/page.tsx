@@ -42,8 +42,14 @@ export default function NetlifyDocs() {
             </li>
             <li>
               You have a subdomain reserved on from-mm.dev and selected{" "}
-              <strong className="text-zinc-900 dark:text-zinc-100">Netlify</strong> as the target{" "}
-              (<Link href="/register" className="text-green-600 hover:underline">register now</Link>)
+              <strong className="text-zinc-900 dark:text-zinc-100">
+                Netlify
+              </strong>{" "}
+              as the target (
+              <Link href="/register" className="text-green-600 hover:underline">
+                register now
+              </Link>
+              )
             </li>
             <li>
               You can open your Netlify site&apos;s{" "}
@@ -77,10 +83,16 @@ export default function NetlifyDocs() {
               <ol className="text-sm text-zinc-600 dark:text-zinc-400 flex flex-col gap-1.5 list-decimal list-inside">
                 <li>Open your site dashboard on Netlify</li>
                 <li>
-                  Click <strong className="text-zinc-900 dark:text-zinc-100">Site configuration</strong>
+                  Click{" "}
+                  <strong className="text-zinc-900 dark:text-zinc-100">
+                    Site configuration
+                  </strong>
                 </li>
                 <li>
-                  Open <strong className="text-zinc-900 dark:text-zinc-100">Domain management</strong>
+                  Open{" "}
+                  <strong className="text-zinc-900 dark:text-zinc-100">
+                    Domain management
+                  </strong>
                 </li>
               </ol>
             </Step>
@@ -88,7 +100,10 @@ export default function NetlifyDocs() {
             <Step number={3} title="Add your from-mm.dev subdomain">
               <ol className="text-sm text-zinc-600 dark:text-zinc-400 flex flex-col gap-1.5 list-decimal list-inside">
                 <li>
-                  Click <strong className="text-zinc-900 dark:text-zinc-100">Add a domain</strong>
+                  Click{" "}
+                  <strong className="text-zinc-900 dark:text-zinc-100">
+                    Add a domain
+                  </strong>
                 </li>
                 <li>
                   Enter your subdomain, for example{" "}
@@ -100,23 +115,57 @@ export default function NetlifyDocs() {
               </ol>
             </Step>
 
+            <Step number={6} title="Copy the DNS target Netlify gives you">
+              <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-3">
+                Netlify will usually provide a target hostname for your custom
+                domain. That is the value from-mm.dev needs to point at.
+              </p>
+              <div className="rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 py-3 text-sm font-mono">
+                <span className="text-zinc-400">CNAME</span>{" "}
+                <span className="text-green-600">yourname.from-mm.dev</span>{" "}
+                <span className="text-zinc-400">→</span>{" "}
+                <span className="text-zinc-900 dark:text-zinc-100">
+                  your-site.netlify.app
+                </span>
+              </div>
+              <p className="text-xs text-zinc-400 mt-2">
+                The exact target may differ depending on your Netlify site
+                setup.
+              </p>
+            </Step>
 
-            <Step number={4} title="Add the Netlify TXT verification value if requested">
+            <Step number={7} title="Paste the target into from-mm.dev">
               <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                If Netlify asks for TXT verification, copy the TXT value it shows
-                and paste it into from-mm.dev. from-mm.dev will create the TXT
-                record using the fixed name{" "}
+                During registration on from-mm.dev, select{" "}
+                <strong className="text-zinc-900 dark:text-zinc-100">
+                  Netlify
+                </strong>{" "}
+                and paste the target hostname Netlify gives you. from-mm.dev
+                will create the CNAME record for you.
+              </p>
+            </Step>
+
+            <Step
+              number={4}
+              title="Add the Netlify TXT verification value if requested"
+            >
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                If Netlify asks for TXT verification, copy the TXT value it
+                shows and paste it into from-mm.dev. from-mm.dev will create the
+                TXT record using the fixed name{" "}
                 <code className="bg-zinc-100 dark:bg-zinc-800 px-1.5 rounded font-mono text-sm">
                   subdomain-owner-verification
-                </code>.
+                </code>
+                .
               </p>
             </Step>
 
             <Step number={5} title="Verify HTTPS">
               <p className="text-sm text-zinc-600 dark:text-zinc-400">
                 After DNS resolves correctly, Netlify should provision HTTPS for
-                your subdomain automatically. If the certificate is still pending,
-                wait a few minutes and refresh the domain settings page.
+                your subdomain automatically. If the certificate is still
+                pending, wait a few minutes and refresh the domain settings
+                page.
               </p>
             </Step>
           </div>
@@ -126,16 +175,16 @@ export default function NetlifyDocs() {
           <h2 className="text-lg font-semibold mb-5">Troubleshooting</h2>
           <div className="flex flex-col gap-5">
             <TroubleshootItem title="Netlify says the custom domain is not using the expected DNS">
-              Double-check the hostname Netlify shows for your custom domain. The
-              final CNAME target must match Netlify exactly.
+              Double-check the hostname Netlify shows for your custom domain.
+              The final CNAME target must match Netlify exactly.
             </TroubleshootItem>
             <TroubleshootItem title="HTTPS certificate is still pending">
               Wait up to 10 minutes after the DNS record starts resolving. Then
               refresh the custom domain page in Netlify.
             </TroubleshootItem>
             <TroubleshootItem title="The site shows a Netlify 404 page">
-              Make sure the custom domain is attached to the correct Netlify site
-              and not another site in the same Netlify account.
+              Make sure the custom domain is attached to the correct Netlify
+              site and not another site in the same Netlify account.
             </TroubleshootItem>
             <TroubleshootItem title="The domain is already assigned somewhere else">
               Remove the custom domain from the old Netlify site first, then add
@@ -143,7 +192,11 @@ export default function NetlifyDocs() {
             </TroubleshootItem>
             <TroubleshootItem title="Netlify asks for a TXT record">
               Paste only the TXT value into from-mm.dev. The TXT record name is
-              fixed to <code className="bg-zinc-100 dark:bg-zinc-800 px-1.5 rounded font-mono text-xs">subdomain-owner-verification</code>.
+              fixed to{" "}
+              <code className="bg-zinc-100 dark:bg-zinc-800 px-1.5 rounded font-mono text-xs">
+                subdomain-owner-verification
+              </code>
+              .
             </TroubleshootItem>
           </div>
         </section>

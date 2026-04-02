@@ -238,12 +238,12 @@ export default function RegisterPage() {
                   ? `Points to: ${customTarget}`
                   : type === "vercel"
                     ? "Enter your Vercel CNAME value below"
-                    : ""}
+                    : "Enter your Netlify target below"}
             </p>
           </div>
 
           {/* Custom target input */}
-          {type == "vercel" && (
+          {type !== "github_pages" && (
             <div>
               <label className="block text-sm font-medium mb-2">
                 {type === "vercel" ? "Vercel CNAME value" : "Netlify target"}
@@ -337,7 +337,7 @@ export default function RegisterPage() {
               availability === "taken" ||
               availability === "invalid" ||
               availability === "checking" ||
-              (type === "vercel" && !customTarget)
+              (type != "github_pages" && !customTarget)
             }
             className="rounded-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 px-6 py-3 font-semibold disabled:opacity-50 hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors"
           >
